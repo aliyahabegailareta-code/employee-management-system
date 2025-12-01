@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #e0e7ff 100%);
+            color: #334155;
+        }
+
+        .dashboard {
+            max-width: 360px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: #fff;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border-radius: 0 0 18px 18px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+            padding-top: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 5px;
+        }
+
+        .nav-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .nav-icon:hover {
+            background: rgba(148, 163, 184, 0.1);
+        }
+
+        .nav-icon i {
+            font-size: 18px;
+            color: #475569;
+        }
+
+        .title {
+            text-align: center;
+            flex: 1;
+        }
+
+        .title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f172a, #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .time-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 16px 8px 24px 8px;
+        }
+
+        .date-display {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+            transition: box-shadow 0.3s;
+        }
+
+        .profile-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-avatar {
+            position: relative;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            object-fit: cover;
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 15px;
+            height: 15px;
+            background: #10b981;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .profile-info {
+            flex: 1;
+            padding: 0px;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .profile-role {
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .edit-btn {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .edit-btn:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: #cbd5e1;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-card {
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .history-card {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .deductions-card {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .action-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            transition: background-color 0.2s;
+        }
+
+        .action-card:hover .action-icon {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .action-icon i {
+            font-size: 16px;
+        }
+
+        .action-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .action-subtitle {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* Salary Section */
+        .salary-card {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .salary-card.payslip-bg {
+            background: #fff;
+            border: 1.5px solid #e5e7eb;
+            box-shadow: 0 4px 16px rgba(30, 41, 59, 0.06);
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .salary-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: #065f46;
+        }
+
+        .salary-header i {
+            font-size: 20px;
+        }
+
+        .salary-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .salary-amount {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .salary-main {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #059669, #0d9488);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .salary-label {
+            font-size: 14px;
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .salary-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .breakdown-item {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .breakdown-label {
+            font-size: 13px;
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .breakdown-value {
+            font-size: 16px;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
+        .stat-value.green {
+            color: #059669;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Responsive adjustments for very small screens */
+        @media (max-width: 360px) {
+            .profile-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+
+            .salary-main {
+                font-size: 32px;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard {
+                max-width: 100vw;
+                min-height: 100vh;
+                border-radius: 0;
+                margin: 0;
+                box-shadow: none;
+            }
+            .main-content {
+                padding: 8px 2px 16px 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <button class="nav-icon" onclick="window.location.href='Login.html'">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                
+                <div class="title">
+                    <h1>Employee Dashboard</h1>
+                    <div class="time-display">
+                        <i class="fas fa-clock"></i>
+                        <span id="current-time">12:02:00</span>
+                    </div>
+                </div>
+                
+                <button class="nav-icon" id="download-payslip-btn">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Date Display -->
+            <div class="date-display" id="current-date">
+                Monday, January 15, 2024
+            </div>
+
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-content">
+                    <div class="profile-avatar">
+                        <img id="profile-avatar" src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop" 
+                             alt="Profile" class="avatar">
+                        <div class="status-indicator"></div>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <h2 class="profile-name" id="profile-name">Employee Name</h2>
+                        <div class="badges">
+                            <span class="badge badge-blue">
+                                <i class="fas fa-hashtag"></i>
+                                <span id="employee-number">EMP-XXXX-XXX</span>
+                            </span>
+                            <span class="badge badge-green">
+                                <i class="fas fa-building"></i>
+                                <span id="department">Department</span>
+                            </span>
+                        </div>
+                        
+                        <button class="edit-btn" onclick="window.location.href='ChangeProfile.html'">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-card history-card" onclick="window.location.href='History.html'">
+                    <div class="action-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3 class="action-title">History</h3>
+                    <p class="action-subtitle">View past payslips</p>
+                </button>
+
+                <button class="action-card deductions-card" onclick="window.location.href='Deductions.html'">
+                    <div class="action-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3 class="action-title">Deductions</h3>
+                    <p class="action-subtitle">View deductions</p>
+                </button>
+            </div>
+
+            <!-- Salary Section -->
+            <div class="salary-card payslip-bg" style="padding: 0; overflow-x: auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:15px; background:transparent;">
+                    <tr>
+                        <th colspan="2" style="text-align:center; font-size:18px; padding:16px 0 8px 0; color:#0f172a;">
+                            YAZAKI TORRES MANUFACTURING INCORPORATED<br>
+                            <span style="font-size:15px; color:#475569;">Weekly Payslip</span>
+                        </th>
+                    </tr>
+                    <tr><td style="width:50%;">Employee Name:</td><td id="payslip-employee-name"><b>Employee Name</b></td></tr>
+                    <tr><td>Employee ID:</td><td id="payslip-employee-id">EMP-XXXX-XXX</td></tr>
+                    <tr><td>Position:</td><td id="payslip-position">Position</td></tr>
+                    <tr><td>Pay Week:</td><td id="payslip-payweek">YYYY-MM-DD to YYYY-MM-DD</td></tr>
+                    <tr><td>Basic Salary:</td><td id="payslip-basic-salary">₱0.00</td></tr>
+                    <tr><td>Overtime Pay:</td><td id="payslip-overtime">₱0.00</td></tr>
+                    <tr><td>Allowances:</td><td id="payslip-allowances">₱0.00</td></tr>
+                    <tr><td>Gross Pay:</td><td id="payslip-gross">₱0.00</td></tr>
+                    <tr><td>Pag-ibig:</td><td id="payslip-pagibig">₱0.00</td></tr>
+                    <tr><td>SSS:</td><td id="payslip-sss">₱0.00</td></tr>
+                    <tr><td>PhilHealth:</td><td id="payslip-philhealth">₱0.00</td></tr>
+                    <tr>
+                        <td colspan="2"><hr style="border:1px solid #2563eb; margin:8px 0;"></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">Net Pay:</td>
+                        <td id="payslip-netpay" style="font-weight:bold; color:#059669; font-size:17px;">₱0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Generated on:</td>
+                        <td id="payslip-generated">MM/DD/YY</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">22</div>
+                    <div class="stat-label">Days Present</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">176</div>
+                    <div class="stat-label">Hours Worked</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value green">98%</div>
+                    <div class="stat-label">Attendance Rate</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add jsPDF libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // Update profile picture from localStorage
+        function updateProfilePicture() {
+            const savedImage = localStorage.getItem('profilePicture');
+            const profileAvatar = document.getElementById('profile-avatar');
+            
+            if (savedImage) {
+                profileAvatar.src = savedImage;
+            }
+        }
+
+        // Download salary as PDF
+        function downloadSalaryPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Get current date and time
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                const timeStr = now.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Header (company and payslip title)
+                doc.setFontSize(16);
+                doc.text('YAZAKI TORRES MANUFACTURING INCORPORATED', 105, 18, { align: 'center' });
+                doc.setFontSize(13);
+                doc.text('Weekly Payslip', 105, 28, { align: 'center' });
+
+                // Gather payslip data
+                const getVal = id => {
+                    const el = document.getElementById(id);
+                    if (!el) throw new Error(`Missing element: ${id}`);
+                    return el.textContent;
+                };
+                const details = [
+                    ['Employee Name:', getVal('payslip-employee-name')],
+                    ['Employee ID:', getVal('payslip-employee-id')],
+                    ['Position:', getVal('payslip-position')],
+                    ['Pay Week:', getVal('payslip-payweek')],
+                    ['Basic Salary:', getVal('payslip-basic-salary')],
+                    ['Overtime Pay:', getVal('payslip-overtime')],
+                    ['Allowances:', getVal('payslip-allowances')],
+                    ['Gross Pay:', getVal('payslip-gross')],
+                    ['Pag-ibig:', getVal('payslip-pagibig')],
+                    ['SSS:', getVal('payslip-sss')],
+                    ['PhilHealth:', getVal('payslip-philhealth')]
+                ];
+
+                let y = 42;
+                doc.setFontSize(12);
+                details.forEach(([label, value]) => {
+                    doc.text(label, 14, y);
+                    doc.text(value, 70, y);
+                    y += 9;
+                });
+
+                // Draw a horizontal line before Net Pay
+                y += 4;
+                doc.setDrawColor(37, 99, 235);
+                doc.setLineWidth(0.8);
+                doc.line(14, y, 196, y);
+                y += 10;
+
+                // Net Pay (bold, green)
+                doc.setFontSize(13);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(5, 150, 105);
+                doc.text('Net Pay:', 14, y);
+                doc.text(getVal('payslip-netpay'), 70, y);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(33, 37, 41);
+                y += 12;
+
+                // Generated on
+                doc.setFontSize(11);
+                doc.text('Generated on:', 14, y);
+                doc.text(getVal('payslip-generated'), 70, y);
+                y += 10;
+
+                // Footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.text(
+                        'This is a computer-generated document. No signature is required.',
+                        14,
+                        doc.internal.pageSize.height - 10
+                    );
+                    doc.text(
+                        `Page ${i} of ${pageCount}`,
+                        doc.internal.pageSize.width - 20,
+                        doc.internal.pageSize.height - 10,
+                        { align: 'right' }
+                    );
+                }
+
+                // Download the PDF
+                doc.save(`weekly_payslip_${dateStr.replace(/,/g, '')}.pdf`);
+            } catch (err) {
+                alert('Error generating PDF: ' + err.message);
+            }
+        }
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Update current date
+        function updateDate() {
+            const now = new Date();
+            const dateString = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('current-date').textContent = dateString;
+        }
+
+        // Initialize time and date
+        updateTime();
+        updateDate();
+        setInterval(updateTime, 1000);
+
+        // Download payslip functionality
+        document.getElementById('download-payslip-btn').addEventListener('click', async function() {
+            try {
+                // Show loading state
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                // TODO: Replace with actual API endpoint
+                // const response = await fetch('/api/payslip/download');
+                // const blob = await response.blob();
+                // const url = window.URL.createObjectURL(blob);
+                // const a = document.createElement('a');
+                // a.href = url;
+                // a.download = 'payslip.pdf';
+                // document.body.appendChild(a);
+                // a.click();
+                // document.body.removeChild(a);
+                // window.URL.revokeObjectURL(url);
+
+                // For now, show a message
+                alert('Payslip download functionality will be available soon!');
+            } catch (error) {
+                console.error('Error downloading payslip:', error);
+                alert('Failed to download payslip. Please try again later.');
+            } finally {
+                // Reset button state
+                this.innerHTML = '<i class="fas fa-download"></i>';
+            }
+        });
+
+        // History button functionality
+        document.querySelector('.history-card').addEventListener('click', function() {
+            window.location.href = 'History.html';
+        });
+
+        // Deductions button functionality
+        document.querySelector('.deductions-card').addEventListener('click', function() {
+            window.location.href = 'Deductions.html';
+        });
+
+        // Back button functionality
+        document.querySelector('.nav-icon').addEventListener('click', function() {
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = 'Login.html';
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update profile picture
+            updateProfilePicture();
+            
+            // Add click handler to download button
+            const downloadBtn = document.getElementById('download-payslip-btn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', downloadSalaryPDF);
+            }
+            
+            // Add touch feedback for mobile
+            document.querySelectorAll('.action-card, .nav-icon, .edit-btn').forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                element.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# Database
+*.sql
+*.db
+*.sqlite
+
+# Configuration files with sensitive data
+config.php
+.env
+*.env
+
+# XAMPP/htdocs (if copied)
+htdocs/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Uploads (keep structure but ignore content)
+user/uploads/profile_pictures/*
+!user/uploads/profile_pictures/.gitkeep
+
+# Node modules (if any)
+node_modules/
+
+# Composer
+vendor/
+
+# Cache
+cache/
+*.cache
+
